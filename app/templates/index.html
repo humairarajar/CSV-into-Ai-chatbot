@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV Chat</title>
+</head>
+<body>
+    <h1>CSV Chat 💬📊</h1>
+    <p>Upload your CSV file to get started</p>
+
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".csv" required>
+        <button type="submit">Upload</button>
+    </form>
+</body>
+</html>
