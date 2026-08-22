@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV Preview</title>
+    <style>
+        table.preview-table {
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table.preview-table th, table.preview-table td {
+            border: 1px solid #ccc;
+            padding: 6px 12px;
+            text-align: left;
+        }
+        table.preview-table th {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSV Chat 💬📊</h1>
+
+    <p><strong>File:</strong> {{ filename }}</p>
+    <p><strong>Rows:</strong> {{ num_rows }} &nbsp; <strong>Columns:</strong> {{ num_cols }}</p>
+    <p><strong>Column names:</strong> {{ columns }}</p>
+
+    <h3>Preview (first 5 rows)</h3>
+    {{ preview_table | safe }}
+
+    <br><br>
+    <a href="/">← Upload another file</a>
+</body>
+</html>

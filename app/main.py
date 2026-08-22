@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template
 import os
+import pandas as pd
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "data"
@@ -27,7 +28,22 @@ def upload():
     filepath = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
     file.save(filepath)
 
-    return f"File '{file.filename}' uploaded successfully!"
+    # CSV ko read karein pandas se
+    df = pd.read_csv(filepath)
+
+    # Preview info nikalein
+    num_rows, num_cols = df.shape
+    columns = df.columns.tolist()
+    preview_html = df.head().to_html(classes="preview-table", index=False)
+
+    return render_template(
+        "preview.html",
+        filename=file.filename,
+        num_rows=num_rows,
+        num_cols=num_cols,
+        columns=columns,
+        preview_table=preview_html,
+    )
 
 
 if __name__ == "__main__":
