@@ -15,6 +15,16 @@
         table.preview-table th {
             background-color: #f0f0f0;
         }
+        #chat-form {
+            margin-top: 15px;
+        }
+        #answer-box {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            min-height: 20px;
+        }
     </style>
 </head>
 <body>
@@ -22,12 +32,45 @@
 
     <p><strong>File:</strong> {{ filename }}</p>
     <p><strong>Rows:</strong> {{ num_rows }} &nbsp; <strong>Columns:</strong> {{ num_cols }}</p>
+    <p><strong>File size:</strong> {{ file_size_kb }} KB</p>
     <p><strong>Column names:</strong> {{ columns }}</p>
 
     <h3>Preview (first 5 rows)</h3>
     {{ preview_table | safe }}
 
+    <hr>
+    <h3>Ask a question about your data</h3>
+    <form id="chat-form">
+        <input type="text" id="question" name="question" placeholder="e.g. What is the average value?" size="50" required>
+        <button type="submit">Ask</button>
+    </form>
+
+    <div id="answer-box"></div>
+
     <br><br>
     <a href="/">← Upload another file</a>
+
+    <script>
+        document.getElementById("chat-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const question = document.getElementById("question").value;
+            const filename = "{{ filename }}";
+
+            document.getElementById("answer-box").innerText = "Thinking...";
+
+            const formData = new FormData();
+            formData.append("question", question);
+            formData.append("filename", filename);
+
+            fetch("/ask", {
+                method: "POST",
+                body: formData,
+            })
+                .then((res) => res.text())
+                .then((data) => {
+                    document.getElementById("answer-box").innerText = data;
+                });
+        });
+    </script>
 </body>
 </html>
