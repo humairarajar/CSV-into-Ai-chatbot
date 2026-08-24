@@ -70,14 +70,56 @@ def upload():
     )
 
 
+@app.route("/list-models")
+def list_models():
+    # List all models available to this API key - helps debug 404 model errors
+    models = client.models.list()
+    model_ids = [m.id for m in models.data]
+    return "<br>".join(model_ids)
+
+
 @app.route("/test-ai")
 def test_ai():
     # Simple test to confirm Groq connection works
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="openai/gpt-oss-20b",
         messages=[{"role": "user", "content": "Say hello in one short sentence."}],
     )
     return response.choices[0].message.content
+
+
+@app.route("/ask", methods=["POST"])
+def ask():
+    # Get the question and filename from the request
+    question = request.form.get("question")
+    filename = request.form.get("filename")
+
+    if not question or not filename:
+        return "Missing question or filename", 400
+
+    # Load the CSV to get its structure for context
+    filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    df = pd.read_csv(filepath)
+    columns = df.columns.tolist()
+    dtypes = df.dtypes.astype(str).to_dict()
+
+    # Build a prompt that gives the AI context about the data
+    prompt = f"""You are a pandas expert. Given a DataFrame called `df` with these columns and types:
+{dtypes}
+
+Write ONLY a single line of pandas code (no explanation, no markdown) that answers this question:
+"{question}"
+
+The code should store the final answer in a variable called `result`."""
+
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-20b",
+        messages=[{"role": "user", "content": prompt}],
+    )
+
+    generated_code = response.choices[0].message.content.strip()
+
+    return f"Generated code: {generated_code}"
 
 
 if __name__ == "__main__":
