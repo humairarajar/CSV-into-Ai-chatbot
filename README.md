@@ -48,7 +48,7 @@ Then open `http://127.0.0.1:5000` in your browser.
 - [x] Day 3: CSV preview (rows, columns, file size)
 - [x] Day 4: Chat UI
 - [x] Day 5: Groq AI integration
-- [ ] Day 6: Question → pandas code generation
+- [x] Day 6: Question → pandas code generation
 - [ ] Day 7: Safe code execution
 - [ ] Day 8: Display results in chat
 - [ ] Day 9: Error handling
