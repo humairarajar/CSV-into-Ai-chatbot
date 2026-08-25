@@ -1,62 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>CSV Preview</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 32px 16px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .stat-pill {
+            background: #f0f1ff;
+            color: #4c51bf;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .columns-text {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #6b7280;
+            word-break: break-word;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            font-size: 15px;
+            color: #374151;
+            margin-bottom: 14px;
+        }
+
         table.preview-table {
             border-collapse: collapse;
-            margin-top: 20px;
+            width: 100%;
+            font-size: 13px;
         }
+
         table.preview-table th, table.preview-table td {
-            border: 1px solid #ccc;
-            padding: 6px 12px;
+            border: 1px solid #eee;
+            padding: 8px 12px;
             text-align: left;
         }
+
         table.preview-table th {
-            background-color: #f0f0f0;
+            background-color: #f8f9ff;
+            color: #4c51bf;
+            font-weight: 600;
         }
+
+        table.preview-table tr:hover {
+            background-color: #fafafa;
+        }
+
         #chat-form {
-            margin-top: 15px;
+            display: flex;
+            gap: 10px;
         }
+
+        #question {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        #question:focus {
+            border-color: #667eea;
+        }
+
+        #chat-form button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        #chat-form button:hover {
+            transform: translateY(-2px);
+        }
+
         #answer-box {
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
+            margin-top: 16px;
+            padding: 16px;
+            background: #f8f9ff;
+            border-radius: 10px;
             min-height: 20px;
+            font-size: 14px;
+            color: #1a1a2e;
+            white-space: pre-wrap;
+            display: none;
+        }
+
+        #answer-box.visible {
+            display: block;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 8px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <h1>CSV Chat 💬📊</h1>
+    <div class="container">
+        <div class="header">
+            <h1>💬 {{ filename }}</h1>
+            <div class="stats">
+                <span class="stat-pill">{{ num_rows }} rows</span>
+                <span class="stat-pill">{{ num_cols }} columns</span>
+                <span class="stat-pill">{{ file_size_kb }} KB</span>
+            </div>
+            <p class="columns-text"><strong>Columns:</strong> {{ columns }}</p>
+        </div>
 
-    <p><strong>File:</strong> {{ filename }}</p>
-    <p><strong>Rows:</strong> {{ num_rows }} &nbsp; <strong>Columns:</strong> {{ num_cols }}</p>
-    <p><strong>File size:</strong> {{ file_size_kb }} KB</p>
-    <p><strong>Column names:</strong> {{ columns }}</p>
+        <div class="card">
+            <h3>Preview (first 5 rows)</h3>
+            {{ preview_table | safe }}
+        </div>
 
-    <h3>Preview (first 5 rows)</h3>
-    {{ preview_table | safe }}
+        <div class="card">
+            <h3>Ask a question about your data</h3>
+            <form id="chat-form">
+                <input type="text" id="question" name="question" placeholder="e.g. What is the average value?" required>
+                <button type="submit">Ask</button>
+            </form>
+            <div id="answer-box"></div>
+        </div>
 
-    <hr>
-    <h3>Ask a question about your data</h3>
-    <form id="chat-form">
-        <input type="text" id="question" name="question" placeholder="e.g. What is the average value?" size="50" required>
-        <button type="submit">Ask</button>
-    </form>
-
-    <div id="answer-box"></div>
-
-    <br><br>
-    <a href="/">← Upload another file</a>
+        <a class="back-link" href="/">← Upload another file</a>
+    </div>
 
     <script>
         document.getElementById("chat-form").addEventListener("submit", function (e) {
             e.preventDefault();
             const question = document.getElementById("question").value;
             const filename = "{{ filename }}";
+            const answerBox = document.getElementById("answer-box");
 
-            document.getElementById("answer-box").innerText = "Thinking...";
+            answerBox.classList.add("visible");
+            answerBox.innerText = "Thinking...";
 
             const formData = new FormData();
             formData.append("question", question);
@@ -68,7 +209,7 @@
             })
                 .then((res) => res.text())
                 .then((data) => {
-                    document.getElementById("answer-box").innerText = data;
+                    answerBox.innerText = data;
                 });
         });
     </script>
