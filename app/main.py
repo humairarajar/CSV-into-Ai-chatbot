@@ -119,7 +119,20 @@ The code should store the final answer in a variable called `result`."""
 
     generated_code = response.choices[0].message.content.strip()
 
-    return f"Generated code: {generated_code}"
+    # Remove markdown code fences if the AI added them despite instructions
+    generated_code = generated_code.replace("```python", "").replace("```", "").strip()
+
+    # Safe execution: only allow access to pandas and the dataframe itself
+    safe_globals = {"pd": pd, "df": df}
+    safe_locals = {}
+
+    try:
+        exec(generated_code, safe_globals, safe_locals)
+        result = safe_locals.get("result", "No result variable found")
+    except Exception as e:
+        return f"Sorry, I couldn't process that question. Error: {str(e)}"
+
+    return str(result)
 
 
 if __name__ == "__main__":
