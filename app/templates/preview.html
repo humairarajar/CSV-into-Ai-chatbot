@@ -145,6 +145,11 @@
             display: block;
         }
 
+        #answer-box.error {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
         .back-link {
             display: inline-block;
             margin-top: 8px;
@@ -196,6 +201,7 @@
             const filename = "{{ filename }}";
             const answerBox = document.getElementById("answer-box");
 
+            answerBox.classList.remove("error");
             answerBox.classList.add("visible");
             answerBox.innerText = "Thinking...";
 
@@ -210,6 +216,9 @@
                 .then((res) => res.text())
                 .then((data) => {
                     answerBox.innerText = data;
+                    if (data.toLowerCase().includes("sorry") || data.toLowerCase().includes("error")) {
+                        answerBox.classList.add("error");
+                    }
                 });
         });
     </script>
