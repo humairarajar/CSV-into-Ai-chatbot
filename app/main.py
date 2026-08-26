@@ -88,6 +88,13 @@ def test_ai():
     return response.choices[0].message.content
 
 
+def format_result(result):
+    # Round floating point numbers to 2 decimal places for cleaner display
+    if isinstance(result, float):
+        return round(result, 2)
+    return result
+
+
 @app.route("/ask", methods=["POST"])
 def ask():
     # Get the question and filename from the request
@@ -129,8 +136,9 @@ The code should store the final answer in a variable called `result`."""
     try:
         exec(generated_code, safe_globals, safe_locals)
         result = safe_locals.get("result", "No result variable found")
+        result = format_result(result)
     except Exception as e:
-        return f"Sorry, I couldn't process that question. Error: {str(e)}"
+        return f"Sorry, I couldn't process that question. Try rephrasing it.", 200
 
     return str(result)
 
