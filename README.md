@@ -49,11 +49,11 @@ Then open `http://127.0.0.1:5000` in your browser.
 - [x] Day 4: Chat UI
 - [x] Day 5: Groq AI integration
 - [x] Day 6: Question → pandas code generation
-- [ ] Day 7: Safe code execution
-- [ ] Day 8: Display results in chat
-- [ ] Day 9: Error handling
-- [ ] Day 10: Chart generation
-- [ ] Day 11: Chat history
-- [ ] Day 12: UI polish
-- [ ] Day 13: Deployment
+- [x] Day 7: Safe code execution
+- [x] Day 8: Result formatting and error handling
+- [ ] Day 9: Chart generation
+- [ ] Day 10: Chat history
+- [ ] Day 11: UI polish
+- [ ] Day 12: Deployment
+- [ ] Day 13: Testing
 - [ ] Day 14: Final docs and demo
