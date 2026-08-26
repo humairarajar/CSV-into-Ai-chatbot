@@ -111,13 +111,19 @@ def ask():
     dtypes = df.dtypes.astype(str).to_dict()
 
     # Build a prompt that gives the AI context about the data
+    # Be lenient with short/casual phrasing - only flag truly nonsensical input
     prompt = f"""You are a pandas expert. Given a DataFrame called `df` with these columns and types:
 {dtypes}
 
-Write ONLY a single line of pandas code (no explanation, no markdown) that answers this question:
+The user asked this question:
 "{question}"
 
-The code should store the final answer in a variable called `result`."""
+Rules:
+- Short or casually phrased questions are fine (e.g. "highest value", "average", "top 5") — treat them as valid if they relate to the data in any reasonable way, even without a full sentence or question mark.
+- Only write result = "INVALID_QUESTION" if the input is truly random gibberish, nonsense characters, or has absolutely nothing to do with analyzing this data.
+- Otherwise, write ONLY a single line of pandas code (no explanation, no markdown) that answers the question and stores the final answer in a variable called `result`.
+
+Respond with only the code line, nothing else."""
 
     response = client.chat.completions.create(
         model="openai/gpt-oss-20b",
@@ -136,9 +142,14 @@ The code should store the final answer in a variable called `result`."""
     try:
         exec(generated_code, safe_globals, safe_locals)
         result = safe_locals.get("result", "No result variable found")
+
+        # Check if the AI flagged this as an invalid/unclear question
+        if result == "INVALID_QUESTION":
+            return "I'm not sure what you're asking. Try rephrasing your question about the data — e.g. 'what is the average of column X?'"
+
         result = format_result(result)
     except Exception as e:
-        return f"Sorry, I couldn't process that question. Try rephrasing it.", 200
+        return "Sorry, I couldn't process that question. Try rephrasing it."
 
     return str(result)
 
