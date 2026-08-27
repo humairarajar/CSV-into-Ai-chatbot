@@ -184,6 +184,7 @@
 
         <div class="card">
             <h3>Ask a question about your data</h3>
+            <p style="font-size:12px; color:#9ca3af; margin-bottom:10px;">Tip: include the word "chart" or "graph" to get a visual</p>
             <form id="chat-form">
                 <input type="text" id="question" name="question" placeholder="e.g. What is the average value?" required>
                 <button type="submit">Ask</button>
@@ -215,9 +216,14 @@
             })
                 .then((res) => res.text())
                 .then((data) => {
-                    answerBox.innerText = data;
-                    if (data.toLowerCase().includes("sorry") || data.toLowerCase().includes("error")) {
-                        answerBox.classList.add("error");
+                    // If the response is an image tag, render it as HTML; otherwise plain text
+                    if (data.trim().startsWith("<img")) {
+                        answerBox.innerHTML = data;
+                    } else {
+                        answerBox.innerText = data;
+                        if (data.toLowerCase().includes("sorry") || data.toLowerCase().includes("error") || data.toLowerCase().includes("not sure")) {
+                            answerBox.classList.add("error");
+                        }
                     }
                 });
         });
