@@ -1,6 +1,11 @@
 from flask import Flask, request, render_template
 import os
+import io
+import base64
 import pandas as pd
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 from dotenv import load_dotenv
 from groq import Groq
 
@@ -95,6 +100,12 @@ def format_result(result):
     return result
 
 
+def wants_chart(question):
+    # Check if the user is asking for a visual chart
+    chart_keywords = ["chart", "graph", "plot", "visualize", "visualise"]
+    return any(word in question.lower() for word in chart_keywords)
+
+
 @app.route("/ask", methods=["POST"])
 def ask():
     # Get the question and filename from the request
@@ -110,9 +121,22 @@ def ask():
     columns = df.columns.tolist()
     dtypes = df.dtypes.astype(str).to_dict()
 
-    # Build a prompt that gives the AI context about the data
-    # Be lenient with short/casual phrasing - only flag truly nonsensical input
-    prompt = f"""You are a pandas expert. Given a DataFrame called `df` with these columns and types:
+    is_chart_request = wants_chart(question)
+
+    if is_chart_request:
+        # Prompt for generating a matplotlib chart
+        prompt = f"""You are a pandas and matplotlib expert. Given a DataFrame called `df` with these columns and types:
+{dtypes}
+
+Write ONLY Python code (no explanation, no markdown) using matplotlib to create a chart that answers this question:
+"{question}"
+
+Use `plt` (already imported as matplotlib.pyplot) and `df`. Do NOT call plt.show(). Do NOT save to a file. Just create the figure.
+
+Respond with only the code, nothing else."""
+    else:
+        # Prompt for generating pandas code that returns a text/number answer
+        prompt = f"""You are a pandas expert. Given a DataFrame called `df` with these columns and types:
 {dtypes}
 
 The user asked this question:
@@ -135,7 +159,28 @@ Respond with only the code line, nothing else."""
     # Remove markdown code fences if the AI added them despite instructions
     generated_code = generated_code.replace("```python", "").replace("```", "").strip()
 
-    # Safe execution: only allow access to pandas and the dataframe itself
+    if is_chart_request:
+        # Safe execution for chart generation
+        safe_globals = {"pd": pd, "df": df, "plt": plt}
+        safe_locals = {}
+
+        try:
+            plt.figure(figsize=(7, 4))
+            exec(generated_code, safe_globals, safe_locals)
+
+            # Convert the chart to a base64 image string
+            buf = io.BytesIO()
+            plt.savefig(buf, format="png", bbox_inches="tight")
+            plt.close()
+            buf.seek(0)
+            img_base64 = base64.b64encode(buf.read()).decode("utf-8")
+
+            return f'<img src="data:image/png;base64,{img_base64}" style="max-width:100%; border-radius:10px;">'
+        except Exception as e:
+            plt.close()
+            return "Sorry, I couldn't generate that chart. Try rephrasing it."
+
+    # Safe execution for text/number answers
     safe_globals = {"pd": pd, "df": df}
     safe_locals = {}
 
