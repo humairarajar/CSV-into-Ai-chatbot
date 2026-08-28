@@ -51,8 +51,8 @@ Then open `http://127.0.0.1:5000` in your browser.
 - [x] Day 6: Question → pandas code generation
 - [x] Day 7: Safe code execution
 - [x] Day 8: Result formatting and error handling
-- [ ] Day 9: Chart generation
-- [ ] Day 10: Chat history
+- [x] Day 9: Chart generation
+- [x] Day 10: Chat history
 - [ ] Day 11: UI polish
 - [ ] Day 12: Deployment
 - [ ] Day 13: Testing
