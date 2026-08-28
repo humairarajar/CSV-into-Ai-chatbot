@@ -129,23 +129,35 @@
             transform: translateY(-2px);
         }
 
-        #answer-box {
+        #chat-history {
             margin-top: 16px;
-            padding: 16px;
-            background: #f8f9ff;
-            border-radius: 10px;
-            min-height: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .msg-question {
+            align-self: flex-end;
+            background: #667eea;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 12px 12px 2px 12px;
             font-size: 14px;
+            max-width: 80%;
+        }
+
+        .msg-answer {
+            align-self: flex-start;
+            background: #f8f9ff;
             color: #1a1a2e;
+            padding: 12px 16px;
+            border-radius: 12px 12px 12px 2px;
+            font-size: 14px;
+            max-width: 80%;
             white-space: pre-wrap;
-            display: none;
         }
 
-        #answer-box.visible {
-            display: block;
-        }
-
-        #answer-box.error {
+        .msg-answer.error {
             background: #fef2f2;
             color: #b91c1c;
         }
@@ -189,22 +201,35 @@
                 <input type="text" id="question" name="question" placeholder="e.g. What is the average value?" required>
                 <button type="submit">Ask</button>
             </form>
-            <div id="answer-box"></div>
+            <div id="chat-history"></div>
         </div>
 
         <a class="back-link" href="/">← Upload another file</a>
     </div>
 
     <script>
+        const chatHistory = document.getElementById("chat-history");
+
         document.getElementById("chat-form").addEventListener("submit", function (e) {
             e.preventDefault();
-            const question = document.getElementById("question").value;
+            const questionInput = document.getElementById("question");
+            const question = questionInput.value;
             const filename = "{{ filename }}";
-            const answerBox = document.getElementById("answer-box");
 
-            answerBox.classList.remove("error");
-            answerBox.classList.add("visible");
-            answerBox.innerText = "Thinking...";
+            // Add the user's question to the chat history
+            const questionBubble = document.createElement("div");
+            questionBubble.className = "msg-question";
+            questionBubble.innerText = question;
+            chatHistory.appendChild(questionBubble);
+
+            // Add a temporary "thinking" answer bubble
+            const answerBubble = document.createElement("div");
+            answerBubble.className = "msg-answer";
+            answerBubble.innerText = "Thinking...";
+            chatHistory.appendChild(answerBubble);
+
+            questionInput.value = "";
+            answerBubble.scrollIntoView({ behavior: "smooth", block: "end" });
 
             const formData = new FormData();
             formData.append("question", question);
@@ -218,13 +243,14 @@
                 .then((data) => {
                     // If the response is an image tag, render it as HTML; otherwise plain text
                     if (data.trim().startsWith("<img")) {
-                        answerBox.innerHTML = data;
+                        answerBubble.innerHTML = data;
                     } else {
-                        answerBox.innerText = data;
+                        answerBubble.innerText = data;
                         if (data.toLowerCase().includes("sorry") || data.toLowerCase().includes("error") || data.toLowerCase().includes("not sure")) {
-                            answerBox.classList.add("error");
+                            answerBubble.classList.add("error");
                         }
                     }
+                    answerBubble.scrollIntoView({ behavior: "smooth", block: "end" });
                 });
         });
     </script>
