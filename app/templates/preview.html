@@ -66,10 +66,29 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
 
+        .card-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
         .card h3 {
             font-size: 15px;
             color: #374151;
-            margin-bottom: 14px;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .clear-btn:hover {
+            color: #667eea;
         }
 
         table.preview-table {
@@ -129,6 +148,12 @@
             transform: translateY(-2px);
         }
 
+        #chat-form button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         #chat-history {
             margin-top: 16px;
             display: flex;
@@ -160,6 +185,22 @@
         .msg-answer.error {
             background: #fef2f2;
             color: #b91c1c;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #c7d2fe;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         .back-link {
@@ -195,11 +236,14 @@
         </div>
 
         <div class="card">
-            <h3>Ask a question about your data</h3>
+            <div class="card-title-row">
+                <h3>Ask a question about your data</h3>
+                <button class="clear-btn" id="clear-btn">Clear chat</button>
+            </div>
             <p style="font-size:12px; color:#9ca3af; margin-bottom:10px;">Tip: include the word "chart" or "graph" to get a visual</p>
             <form id="chat-form">
                 <input type="text" id="question" name="question" placeholder="e.g. What is the average value?" required>
-                <button type="submit">Ask</button>
+                <button type="submit" id="ask-btn">Ask</button>
             </form>
             <div id="chat-history"></div>
         </div>
@@ -209,6 +253,7 @@
 
     <script>
         const chatHistory = document.getElementById("chat-history");
+        const askBtn = document.getElementById("ask-btn");
 
         document.getElementById("chat-form").addEventListener("submit", function (e) {
             e.preventDefault();
@@ -222,13 +267,14 @@
             questionBubble.innerText = question;
             chatHistory.appendChild(questionBubble);
 
-            // Add a temporary "thinking" answer bubble
+            // Add a temporary "thinking" answer bubble with a spinner
             const answerBubble = document.createElement("div");
             answerBubble.className = "msg-answer";
-            answerBubble.innerText = "Thinking...";
+            answerBubble.innerHTML = '<span class="spinner"></span>Thinking...';
             chatHistory.appendChild(answerBubble);
 
             questionInput.value = "";
+            askBtn.disabled = true;
             answerBubble.scrollIntoView({ behavior: "smooth", block: "end" });
 
             const formData = new FormData();
@@ -250,8 +296,18 @@
                             answerBubble.classList.add("error");
                         }
                     }
+                    askBtn.disabled = false;
                     answerBubble.scrollIntoView({ behavior: "smooth", block: "end" });
+                })
+                .catch(() => {
+                    answerBubble.innerText = "Something went wrong. Please try again.";
+                    answerBubble.classList.add("error");
+                    askBtn.disabled = false;
                 });
+        });
+
+        document.getElementById("clear-btn").addEventListener("click", function () {
+            chatHistory.innerHTML = "";
         });
     </script>
 </body>
