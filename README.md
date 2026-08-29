@@ -53,10 +53,7 @@ Then open `http://127.0.0.1:5000` in your browser.
 - [x] Day 8: Result formatting and error handling
 - [x] Day 9: Chart generation
 - [x] Day 10: Chat history
-- [ ] Day 11: UI polish
-- [ ] Day 12: Deployment
-- [ ] Day 13: Testing
-- [ ] Day 14: Final docs and demo- [x] Day 11: UI polish
+- [x] Day 11: UI polish
 - [ ] Day 12: Deployment
 - [ ] Day 13: Testing
 - [ ] Day 14: Final docs and demo
