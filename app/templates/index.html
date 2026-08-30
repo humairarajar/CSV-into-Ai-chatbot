@@ -1,111 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>CSV Chat</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<title>CSV Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+    body {
+        font-family: 'Inter', sans-serif;
+        background: #f6f4ef;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        color: #2b2926;
+    }
 
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 48px;
-            max-width: 480px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            text-align: center;
-        }
+    .card {
+        background: #fffefc;
+        border: 1px solid #e8e3d8;
+        border-radius: 16px;
+        padding: 48px 44px;
+        max-width: 440px;
+        width: 100%;
+        box-shadow: 0 24px 60px rgba(43, 41, 38, 0.08);
+        text-align: center;
+        animation: floatIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
 
-        .icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-        }
+    @keyframes floatIn {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-        h1 {
-            font-size: 28px;
-            color: #1a1a2e;
-            margin-bottom: 8px;
-        }
+    .kicker {
+        display: inline-block;
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #8a7f6a;
+        margin-bottom: 18px;
+    }
 
-        p.subtitle {
-            color: #6b7280;
-            margin-bottom: 32px;
-            font-size: 15px;
-        }
+    h1 {
+        font-family: 'Fraunces', serif;
+        font-size: 32px;
+        font-weight: 600;
+        color: #221f1c;
+        margin-bottom: 12px;
+        letter-spacing: -0.01em;
+    }
 
-        .upload-zone {
-            border: 2px dashed #c7d2fe;
-            border-radius: 14px;
-            padding: 32px 20px;
-            background: #f8f9ff;
-            transition: all 0.2s ease;
-        }
+    p.subtitle {
+        color: #7a7466;
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 34px;
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
-        .upload-zone:hover {
-            border-color: #667eea;
-            background: #f0f1ff;
-        }
+    .upload-zone {
+        border: 1px solid #e8e3d8;
+        border-radius: 12px;
+        padding: 28px 22px;
+        background: #faf8f3;
+        transition: border-color 0.25s ease, background 0.25s ease;
+    }
 
-        input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
+    .upload-zone:hover {
+        border-color: #a89c7f;
+        background: #f5f1e8;
+    }
 
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 14px 32px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
+    input[type="file"] {
+        width: 100%;
+        font-family: 'Inter', sans-serif;
+        font-size: 13.5px;
+        padding: 9px 4px;
+        margin-bottom: 18px;
+        color: #3f3b34;
+    }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
+    button {
+        background: #221f1c;
+        color: #fffefc;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 9px;
+        font-family: 'Inter', sans-serif;
+        font-size: 14.5px;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        cursor: pointer;
+        width: 100%;
+        transition: background 0.25s ease, transform 0.15s ease;
+    }
 
-        .hint {
-            margin-top: 20px;
-            font-size: 13px;
-            color: #9ca3af;
-        }
-    </style>
+    button:hover {
+        background: #8a6f4e;
+        transform: translateY(-1px);
+    }
+
+    button:active { transform: translateY(0); }
+
+    .hint {
+        margin-top: 22px;
+        font-size: 12px;
+        color: #a89c88;
+        letter-spacing: 0.02em;
+    }
+</style>
 </head>
 <body>
     <div class="card">
-        <div class="icon">💬📊</div>
+        <span class="kicker">Data, in conversation</span>
         <h1>CSV Chat</h1>
-        <p class="subtitle">Upload a CSV and ask questions about it in plain English</p>
+        <p class="subtitle">Upload a spreadsheet and ask about it in plain English — no formulas required.</p>
 
         <form action="/upload" method="POST" enctype="multipart/form-data">
             <div class="upload-zone">
                 <input type="file" name="file" accept=".csv" required>
-                <button type="submit">Upload & Analyze</button>
+                <button type="submit">Upload &amp; analyze</button>
             </div>
         </form>
 
-        <p class="hint">Supports .csv files only</p>
+        <p class="hint">CSV files only · always free</p>
     </div>
 </body>
 </html>
