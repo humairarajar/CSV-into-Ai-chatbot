@@ -5,8 +5,9 @@ colorFrom: yellow
 colorTo: pink
 sdk: gradio
 sdk_version: 4.44.0
-app_file: app.py
+app_file: app/main.py
 pinned: false
+
 ---
 # CSV Chat 💬📊
 
