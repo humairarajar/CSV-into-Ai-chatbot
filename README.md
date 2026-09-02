@@ -1,3 +1,13 @@
+---
+title: CSV Chat
+emoji: 💬
+colorFrom: yellow
+colorTo: pink
+sdk: gradio
+sdk_version: 4.44.0
+app_file: app.py
+pinned: false
+---
 # CSV Chat 💬📊
 
 Upload any CSV file and ask questions about your data in plain English — get instant answers, no coding or Excel formulas needed.
@@ -54,6 +64,6 @@ Then open `http://127.0.0.1:5000` in your browser.
 - [x] Day 9: Chart generation
 - [x] Day 10: Chat history
 - [x] Day 11: UI polish
-- [ ] Day 12: Deployment
+- [x] Day 12: Deployment
 - [ ] Day 13: Testing
 - [ ] Day 14: Final docs and demo
