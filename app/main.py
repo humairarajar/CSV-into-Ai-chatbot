@@ -144,6 +144,7 @@ The user asked this question:
 
 Rules:
 - Short or casually phrased questions are fine (e.g. "highest value", "average", "top 5") — treat them as valid if they relate to the data in any reasonable way, even without a full sentence or question mark.
+- Ranking questions like "top 3 X by Y" or "top N products by revenue" ARE valid — use sort_values() and head() to answer them. Example: for "top 3 products by revenue", write something like: result = df.groupby('Product')['Revenue'].sum().sort_values(ascending=False).head(3)
 - Only write result = "INVALID_QUESTION" if the input is truly random gibberish, nonsense characters, or has absolutely nothing to do with analyzing this data.
 - Otherwise, write ONLY a single line of pandas code (no explanation, no markdown) that answers the question and stores the final answer in a variable called `result`.
 
@@ -189,7 +190,7 @@ Respond with only the code line, nothing else."""
         result = safe_locals.get("result", "No result variable found")
 
         # Check if the AI flagged this as an invalid/unclear question
-        if result == "INVALID_QUESTION":
+        if isinstance(result, str) and result == "INVALID_QUESTION":
             return "I'm not sure what you're asking. Try rephrasing your question about the data — e.g. 'what is the average of column X?'"
 
         result = format_result(result)
@@ -200,5 +201,4 @@ Respond with only the code line, nothing else."""
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 7860))
-    app.run(host="0.0.0.0", port=port)
+    app.run(debug=True, port=7860)
