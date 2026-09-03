@@ -65,6 +65,6 @@ Then open `http://127.0.0.1:5000` in your browser.
 - [x] Day 9: Chart generation
 - [x] Day 10: Chat history
 - [x] Day 11: UI polish
-- [x] Day 12: Deployment
+- [x] Day 12: Core features complete (deployment attempted, on hold for now)
 - [ ] Day 13: Testing
 - [ ] Day 14: Final docs and demo
